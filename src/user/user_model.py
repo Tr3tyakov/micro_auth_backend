@@ -13,13 +13,13 @@ class UserModel(Base):
     age = Column(Integer, nullable=True, default=None, name='Лет')
     password = Column(String, nullable=False, name="Пароль")
     city = Column(String, nullable=True, default=None, name='Город')
-    date_register = Column(DateTime, timezone=True, nullable=False, name='Дата регистрации')
-    last_authorization = Column(DateTime, timezone=True, nullable=True, default=None, name='Дата последней авторизации')
+    date_register = Column(DateTime(timezone=True), nullable=False, name='Дата регистрации')
+    last_authorization = Column(DateTime(timezone=True), nullable=True, default=None, name='Дата последней авторизации')
+    phone = Column(String, default=None, nullable=True, name='Телефон')
+    avatar = Column(String, default=None, nullable=True, name='Аватар')
 
     # google_token
     # apple_token
-
-
 
     def __str__(self):
         return f"{self.first_name}{self.last_name}"
