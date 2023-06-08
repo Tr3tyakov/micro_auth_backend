@@ -1,22 +1,41 @@
+from datetime import datetime
+
 from fastapi import HTTPException
 from sqlalchemy import select
 
-from src.auth.mixins.depends_mixin import DependsMixin
+from src.user.mixins.user_mixin import UserMixin
 from src.user.user_model import UserModel
 
 
-class CheckMixin(DependsMixin):
-    async def _check(self, email, phone):
+class CheckMixin(UserMixin):
+    async def _check_user(self, email, phone=None):
+        is_phone_exsist = False
+        is_email_exsist = False
+
         if phone:
             query = select(UserModel).where(UserModel.phone == phone)
             result = await self.session.execute(query)
-            users = result.scalar_one_or_none()
-            if users:
-                raise HTTPException(detail='Данный телефон уже зарегистрирован в сервисе', status_code=403)
+            user = result.scalar_one_or_none()
+            if user:
+                is_phone_exsist = True
 
         query = select(UserModel).where(UserModel.email == email)
         result = await self.session.execute(query)
-        users = result.scalar_one_or_none()
-        print(users)
-        if users:
-            raise HTTPException(detail="Данный Email уже зарегистрирован в сервисе", status_code=403)
+        user = result.scalar_one_or_none()
+        if user:
+            is_email_exsist = True
+
+        return {"is_phone_exsist": is_phone_exsist, "is_email_exsist": is_email_exsist}
+
+    async def _check_password(self, email, password):
+        query = select(UserModel).where(UserModel.email == email)
+        result = await self.session.execute(query)
+        user = result.scalar_one_or_none()
+        if user:
+            verify_result = await self._verify_password(password=password, hashed_password=user.password)
+            if not verify_result:
+                raise HTTPException(detail='Неправильный пароль', status_code=401)
+
+            user.last_authorization = datetime.now()
+            await self.session.commit()
+            return user

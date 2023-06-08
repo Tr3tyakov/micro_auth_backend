@@ -1,31 +1,46 @@
+from datetime import timedelta, datetime
+
+from jose import JWTError, jwt
 from fastapi import HTTPException
-from fastapi.openapi.models import Response
 
+from src.auth.auth_schema import ResponseAuthUser, ResponsePartAuthUser, ResponsePartAuthTokens
 from src.auth.mixins.check_mixins import CheckMixin
-from src.user.mixins.user_mixin import UserMixin
+from src.auth.mixins.tokens_mixin import TokenMixin
 
 
-class AuthService(CheckMixin, UserMixin):
+class AuthService(CheckMixin, TokenMixin):
     async def registration(self, request):
-        try:
-            await self._check(email=request.email, phone=request.phone)
-        except HTTPException as exec:
-            raise exec
+        '''Проверяем данные пользователя'''
+        result = await self._check_user(email=request.email, phone=request.phone)
+
+        if result['is_phone_exsist']:
+            raise HTTPException(detail='Данный телефон уже зарегистрирован в сервисе', status_code=403)
+
+        if result['is_email_exsist']:
+            raise HTTPException(detail="Данный Email уже зарегистрирован в сервисе", status_code=403)
 
         user = await self._create_user(request=request)
         return user
 
-    def authorization(self, request):
-        pass
+    async def authorization(self, request):
+        email = request.email
+        password = request.password
+
+        '''Проверяем, что пользователь существует в базе'''
+        result = await self._check_user(email=email)
+        if not result['is_email_exsist']:
+            raise HTTPException(detail="Данный Email не зарегистрирован в сервисе", status_code=403)
+
+        '''Проверяем правильность пароля'''
+        try:
+            user = await self._check_password(email=email, password=password)
+        except HTTPException as exec:
+            raise exec
+
+        tokens = self.create_access_token(user_id=user.id)
+
+        response_user = ResponsePartAuthUser(**user.__dict__)
+        return {"user": response_user, "tokens": tokens}
 
     def google_authorization(self):
-        pass
-
-    def vk_authorization(self):
-        pass
-
-    def github_authorization(self):
-        pass
-
-    def apple_authorization(self):
         pass
