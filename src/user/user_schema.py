@@ -12,23 +12,6 @@ class User(BaseModel):
     city: Optional[str] = None
     phone: Optional[str] = None
 
-
-class CreateUser(User):
-    pass
-
-
-class ChangeUser(User):
-    pass
-
-
-class DeleteUser(User):
-    pass
-
-
-class RequestUser(User):
-    password: str
-
-
 class ResponseUser(User):
     id: int
     last_authorization: datetime
@@ -40,7 +23,11 @@ class ResponseUser(User):
         self.date_register = self.formate_time(kwargs.get('date_register'))
 
     def formate_time(self, date):
-        print(date, type(date))
         if date:
             return date.strftime("%d.%m.%Y %H:%m")
         return None
+
+
+
+class ResetPassword(BaseModel):
+    new_password: str

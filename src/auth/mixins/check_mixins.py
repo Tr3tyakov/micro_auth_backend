@@ -3,11 +3,13 @@ from datetime import datetime
 from fastapi import HTTPException
 from sqlalchemy import select
 
+from src.auth.mixins.depends_mixin import DependsMixin
+from src.user.mixins.hash_mixin import HashMixin
 from src.user.mixins.user_mixin import UserMixin
 from src.user.user_model import UserModel
 
 
-class CheckMixin(UserMixin):
+class CheckUserMixin(DependsMixin, HashMixin):
     async def _check_user(self, email, phone=None):
         is_phone_exsist = False
         is_email_exsist = False

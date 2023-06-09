@@ -4,12 +4,13 @@ from jose import JWTError, jwt
 from fastapi import HTTPException
 
 from src.auth.auth_schema import ResponseAuthUser, ResponsePartAuthTokens
-from src.auth.mixins.check_mixins import CheckMixin
+from src.auth.mixins.check_mixins import CheckUserMixin
 from src.auth.mixins.tokens_mixin import TokenMixin
+from src.user.mixins.user_mixin import UserMixin
 from src.user.user_schema import ResponseUser
 
 
-class AuthService(CheckMixin, TokenMixin):
+class AuthService(CheckUserMixin, TokenMixin, UserMixin):
     async def registration(self, request):
         '''Проверяем данные пользователя'''
         result = await self._check_user(email=request.email, phone=request.phone)

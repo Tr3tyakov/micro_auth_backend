@@ -1,4 +1,6 @@
 from fastapi import Depends, APIRouter, HTTPException
+
+from src.user.user_schema import ResetPassword
 from src.user.user_service import UserService
 
 router = APIRouter()
@@ -23,3 +25,8 @@ async def delete_user(id: int, service: UserService = Depends()):
         return await service.delete_user(id=id)
     except HTTPException as exec:
         raise exec
+
+
+@router.post('/reset_password')
+async def reset_password(request: ResetPassword, service: UserService = Depends()):
+    return await service.reset_password(request=request)
