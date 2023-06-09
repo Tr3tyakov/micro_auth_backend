@@ -36,6 +36,6 @@ class CheckMixin(UserMixin):
             if not verify_result:
                 raise HTTPException(detail='Неправильный пароль', status_code=401)
 
-            user.last_authorization = datetime.now()
+            user.last_authorization = datetime.utcnow()
             await self.session.commit()
             return user

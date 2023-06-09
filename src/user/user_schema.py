@@ -31,5 +31,16 @@ class RequestUser(User):
 
 class ResponseUser(User):
     id: int
-    date_register: datetime
     last_authorization: datetime
+    date_register: datetime
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.last_authorization = self.formate_time(kwargs.get('last_authorization'))
+        self.date_register = self.formate_time(kwargs.get('date_register'))
+
+    def formate_time(self, date):
+        print(date, type(date))
+        if date:
+            return date.strftime("%d.%m.%Y %H:%m")
+        return None

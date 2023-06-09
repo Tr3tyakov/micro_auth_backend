@@ -15,7 +15,7 @@ class TokenMixin(DependsMixin):
     ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
     REFRESH_TOKEN_EXPIRE_MINUTES = os.getenv("REFRESH_TOKEN_EXPIRE_MINUTES")
 
-    def create_access_token(self, user_id: int, expires_delta: timedelta | None = None):
+    def create_access_token(self, user_id: int, expires_delta=None):
         '''Если RefreshToken не требуется, вводим свое собственное время жизни токена'''
         if expires_delta:
             expire = datetime.utcnow() + expires_delta
