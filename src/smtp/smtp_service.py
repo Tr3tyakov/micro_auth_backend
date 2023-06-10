@@ -1,12 +1,18 @@
+import random
 import smtplib
 import os
+import string
 
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends, Response
+
 from sqlalchemy import select, update
 from sqlalchemy.engine import create
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from database import get_session
 from src.auth.mixins.check_mixins import CheckUserMixin
 from src.auth.mixins.depends_mixin import DependsMixin
 from src.smtp.smtp_model import SMTPModel
@@ -40,14 +46,30 @@ class SMTPService(CheckUserMixin, DependsMixin):
 
         return information
 
-    async def send_message(self, email, response_message, subject):
-        result = await self._check_user(email=email)
-        if not result['is_email_exsist']:
-            raise HTTPException(detail="Данный Email не зарегистрирован в сервисе", status_code=403)
+    @staticmethod
+    async def send_message(email, subject, mime_text, session: AsyncSession):
+        query = select(SMTPModel).where(SMTPModel.id == 1)
+        result = await session.execute(query)
+        smtp = result.scalar_one_or_none()
 
-        try:
-            smtp_information = await self.get_information()
-        except HTTPException as exec:
-            raise exec
+        if smtp is None:
+            raise HTTPException(detail='SMTP информация отсутствует', status_code=status.HTTP_404_NOT_FOUND)
 
-        print(smtp_information)
+        email_address = smtp.email_address
+        email_login = smtp.email_login
+        email_password = smtp.email_password
+        smtp_address = smtp.smtp_address
+        smtp_port = smtp.smtp_port
+
+        msg = MIMEMultipart()
+        msg["Subject"] = subject
+        msg["From"] = email_address
+        msg["To"] = email
+
+        msg.attach(MIMEText(mime_text))
+
+        s = smtplib.SMTP(smtp_address, smtp_port)
+        s.starttls()
+        s.login(email_login, email_password)
+        s.sendmail(email_address, [email], msg.as_string())
+        s.quit()

@@ -15,7 +15,7 @@ class UserModel(Base):
     password = Column(String, nullable=False, name="Пароль")
     city = Column(String, nullable=True, default=None, name='Город')
     date_register = Column(DateTime(timezone=True), nullable=False, name='Дата регистрации')
-    last_authorization = Column(DateTime(timezone=True), nullable=True, default=None, name='Дата последней авторизации')
+    date_last_actions = Column(DateTime(timezone=True), nullable=True, default=None, name='Дата последних действий')
     phone = Column(String, default=None, nullable=True, name='Телефон', )
     avatar = Column(String, default=None, nullable=True, name='Аватар')
 

@@ -8,31 +8,36 @@ from src.user.user_service import UserService
 router = APIRouter()
 
 
-@router.get('/get_all_users', )
-async def get_all_users(service: UserService = Depends()):
+@router.get('/get_all_users')
+async def get_all_users(service: UserService = Depends(), user: ResponseUser = Depends(authenticate)):
     return await service.get_all_user()
 
 
-@router.get('/get_info/{id}')
-async def get_info(id: int, service: UserService = Depends()):
-    try:
-        return await service.get_user(id=id)
-    except HTTPException as exec:
-        raise exec
+@router.get('/get_info')
+async def get_info(user: ResponseUser = Depends(authenticate)):
+    return user
 
 
-@router.post('/delete_user/{id}')
-async def delete_user(id: int, service: UserService = Depends()):
+@router.delete('/delete_user')
+async def delete_user(service: UserService = Depends(), user: ResponseUser = Depends(authenticate)):
     try:
-        return await service.delete_user(id=id)
+        return await service.delete_user(user)
     except HTTPException as exec:
         raise exec
 
 
 @router.post('/reset_password')
-async def reset_password(request: ResetPassword, service: UserService = Depends(),
+async def reset_password(request: dict, service: UserService = Depends(),
                          user: ResponseUser = Depends(authenticate)):
     try:
         return await service.reset_password(request=request, user=user)
+    except HTTPException as exec:
+        raise exec
+
+
+@router.post('/forgot_password')
+async def forgot_password(request: dict, service: UserService = Depends()):
+    try:
+        return await service.forgot_password(request=request)
     except HTTPException as exec:
         raise exec

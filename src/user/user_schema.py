@@ -14,12 +14,12 @@ class User(BaseModel):
 
 class ResponseUser(User):
     id: int
-    last_authorization: datetime
+    date_last_actions: datetime
     date_register: datetime
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.last_authorization = self.formate_time(kwargs.get('last_authorization'))
+        self.date_last_actions = self.formate_time(kwargs.get('date_last_actions'))
         self.date_register = self.formate_time(kwargs.get('date_register'))
 
     def formate_time(self, date):

@@ -6,3 +6,4 @@ class CreateSMTP(BaseModel):
     smtp_address: str
     smtp_port: str
     email_password: str
+    email_login: str

@@ -33,9 +33,9 @@ async def authenticate(credentials: HTTPAuthorizationCredentials = Depends(secur
 
     user = decoded_token['user']
 
-    """Обновляем поле, last_authorization при выполнении пользователем конкретного действия"""
+    """Обновляем поле, date_last_actions при выполнении пользователем конкретного действия"""
     query = update(UserModel).where(UserModel.email == user['email']).values(
-        last_authorization=datetime.utcnow())
+        date_last_actions=datetime.utcnow())
     await session.execute(query)
     await session.commit()
 
@@ -43,6 +43,11 @@ async def authenticate(credentials: HTTPAuthorizationCredentials = Depends(secur
     query = select(UserModel).where(UserModel.id == user['id'])
     result = await session.execute(query)
     updated_user = result.scalar_one_or_none()
-    serializer = ResponseUser(**updated_user.__dict__)
 
+    if updated_user is None:
+        raise HTTPException(detail='Данный пользователь не зарегистрирован в сервисе', status_code=status.HTTP_403_FORBIDDEN)
+
+    serializer = ResponseUser(**updated_user.__dict__)
     return serializer
+
+
