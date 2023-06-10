@@ -27,7 +27,7 @@ class AuthService(CheckUserMixin, TokenMixin, UserMixin):
 
         user = await self._create_user(request=request)
         hashed_user_data = self.create_access_token(user=ResponseUser(**user.__dict__))
-        confirm_url = 'http://127.0.0.1:8000/user/confirm_email/?user=' + hashed_user_data['access_token']
+        confirm_url = 'http://127.0.0.1:8000/auth/confirm_email/?user=' + hashed_user_data['access_token']
 
         await SMTPService.send_message(email=user.email,
                                        subject='Подтверждение почты',
