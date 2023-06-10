@@ -1,21 +1,10 @@
-from inspect import isclass
-
-from fastapi.encoders import jsonable_encoder
 from fastapi.openapi.models import Response
-from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import delete, select
-from fastapi import HTTPException, status, Header, Depends
-
-from src.smtp.smtp_service import SMTPService
+from fastapi import HTTPException, status
 from src.user.mixins.serializer_mixin import SerializerMixin
 from src.user.mixins.user_mixin import UserMixin
 from src.user.user_model import UserModel
 from src.user.user_schema import ResponseUser
-
-reuseable_oauth = OAuth2PasswordBearer(
-    tokenUrl="/login",
-    scheme_name="JWT"
-)
 
 
 class UserService(UserMixin, SerializerMixin):
@@ -43,9 +32,8 @@ class UserService(UserMixin, SerializerMixin):
         await self.session.commit()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    async def reset_password(self, request, token: str = Depends(reuseable_oauth)):
-        print(request, token)
-
+    async def reset_password(self, request, user):
+        print(user, '1')
         # SMTPService.send_message(sender_email=, response_message=, email=, subject=)
         return 1
 

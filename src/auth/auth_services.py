@@ -1,7 +1,7 @@
 from datetime import timedelta, datetime
 
 from jose import JWTError, jwt
-from fastapi import HTTPException
+from fastapi import HTTPException, Header
 
 from src.auth.auth_schema import ResponseAuthUser, ResponsePartAuthTokens
 from src.auth.mixins.check_mixins import CheckUserMixin
@@ -39,10 +39,19 @@ class AuthService(CheckUserMixin, TokenMixin, UserMixin):
         except HTTPException as exec:
             raise exec
 
-        tokens = self.create_access_token(user_id=user.id)
-
         response_user = ResponseUser(**user.__dict__)
+        tokens = self.create_access_token(user=response_user)
+
         return {"user": response_user, "tokens": tokens}
 
     def google_authorization(self):
         pass
+
+
+
+class AuthGuardService:
+    def __init__(self, authorization: str = Header(default=None)):
+        if authorization is None:
+            self.authorization = None
+            return
+        self.authorization = authorization.split(' ')[1]

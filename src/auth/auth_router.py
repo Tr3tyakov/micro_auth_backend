@@ -2,7 +2,7 @@ from fastapi import Depends, APIRouter, HTTPException
 from fastapi.openapi.models import Response
 
 from src.auth.auth_schema import RegisterUser, AuthUser, ResponseAuthUser
-from src.auth.auth_service import AuthService
+from src.auth.auth_services import AuthService
 
 router = APIRouter()
 
