@@ -12,9 +12,10 @@ class User(BaseModel):
     city: Optional[str] = None
     phone: Optional[str] = None
 
+
 class ResponseUser(User):
     id: int
-    date_last_actions: datetime
+    date_last_actions: Optional[datetime] = None
     date_register: datetime
 
     def __init__(self, **kwargs):
@@ -26,7 +27,6 @@ class ResponseUser(User):
         if date:
             return date.strftime("%d.%m.%Y %H:%m")
         return None
-
 
 
 class ResetPassword(BaseModel):

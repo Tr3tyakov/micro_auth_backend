@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, Column, String, DateTime
+from sqlalchemy import Integer, Column, String, DateTime, Boolean
 
 from database import Base
 from src.user.mixins.serializer_mixin import SerializerMixin
@@ -8,6 +8,7 @@ class UserModel(Base):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True, index=True)
+    is_confirmed = Column(Boolean, default=False, name='Подтвержденная почта')
     email = Column(String, nullable=False, name="Почта")
     first_name = Column(String, nullable=False, name="Имя")
     last_name = Column(String, nullable=False, name='Фамилия')

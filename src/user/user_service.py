@@ -2,6 +2,7 @@ import json
 import string
 import random
 
+from jose import ExpiredSignatureError
 from sqlalchemy import delete, select, update
 from fastapi import HTTPException, status, Response
 from starlette.responses import JSONResponse
@@ -48,7 +49,7 @@ class UserService(UserMixin, CheckUserMixin, SerializerMixin):
 
         result = await self._check_user(email=email)
         if not result['is_email_exsist']:
-            raise HTTPException(detail='Данный пользователь не зарегистрирован',
+            raise HTTPException(detail='Данный пользователь не зарегистрирован в сервисе',
                                 status_code=status.HTTP_400_BAD_REQUEST)
 
         new_password = generate_new_password()

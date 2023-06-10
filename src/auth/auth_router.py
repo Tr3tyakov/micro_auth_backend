@@ -1,5 +1,6 @@
 from fastapi import Depends, APIRouter, HTTPException
 from fastapi.openapi.models import Response
+from jose import ExpiredSignatureError, jwt
 
 from src.auth.auth_schema import RegisterUser, AuthUser, ResponseAuthUser
 from src.auth.auth_services import AuthService
@@ -18,3 +19,13 @@ async def registration(request: RegisterUser, service: AuthService = Depends()):
 @router.post('/authorization')
 async def authorization(request: AuthUser, service: AuthService = Depends()):
     return await service.authorization(request=request)
+
+
+@router.get('/confirm_email')
+async def confirm_email(user: str, service: AuthService = Depends()):
+    try:
+        return await service.confirm_email(user=user)
+    except ExpiredSignatureError as exec:
+        raise exec
+    except jwt.JWTError as jwt_exec:
+        raise jwt_exec

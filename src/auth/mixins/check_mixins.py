@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from sqlalchemy import select
 
 from src.auth.mixins.depends_mixin import DependsMixin
@@ -38,6 +38,9 @@ class CheckUserMixin(DependsMixin, HashMixin):
             if not verify_result:
                 raise HTTPException(detail='Неправильный пароль', status_code=401)
 
-            user.date_last_actions = datetime.utcnow()
-            await self.session.commit()
-            return user
+        if not user.is_confirmed:
+            raise HTTPException(detail='Доступ запрещен', status_code=status.HTTP_200_OK)
+
+        user.date_last_actions = datetime.utcnow()
+        await self.session.commit()
+        return user

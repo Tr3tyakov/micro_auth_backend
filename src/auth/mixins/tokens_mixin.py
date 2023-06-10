@@ -1,5 +1,9 @@
 from datetime import datetime, timedelta
-from jose import jwt
+
+from fastapi import HTTPException
+from jose import jwt, ExpiredSignatureError
+from starlette import status
+
 from src.auth.mixins.depends_mixin import DependsMixin
 from config import load_dotenv
 from src.user.user_schema import ResponseUser
@@ -31,6 +35,18 @@ class TokenMixin(DependsMixin):
 
     def _get_expire(self, expire_minutes):
         return datetime.utcnow() + timedelta(minutes=int(expire_minutes))
+
+    def decode_access_token(self, token):
+        try:
+            """Проверяем правильность/целостность токена"""
+            return jwt.decode(token, self.ACCESS_SECRET_KEY, algorithms=[self.ALGORITHM])
+        except ExpiredSignatureError:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        except jwt.JWTError:
+            raise HTTPException(status_code=401, detail="Invalid token")
+
+    # def decode_refresh_token(self, token):
+    #     return jwt.decode(token, self.REFRESH_SECRET_KEY, algorithms=[self.ALGORITHM])
 
     def _generate_token(self, user, key, expire):
 
