@@ -16,7 +16,7 @@ class UserMixin(DependsMixin, HashMixin):
         return user
 
     async def _create_user(self, request):
-        hash_password = await self._hash_password(request.password)
+        hash_password = self._hash_password(request.password)
         date_register = datetime.utcnow()
         user = UserModel(
             password=hash_password,

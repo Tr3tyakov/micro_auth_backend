@@ -12,6 +12,9 @@ class User(BaseModel):
     city: Optional[str] = None
     phone: Optional[str] = None
 
+class FullUser(User):
+    password:str
+
 
 class ResponseUser(User):
     id: int
