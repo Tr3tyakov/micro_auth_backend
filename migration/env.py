@@ -8,6 +8,7 @@ from alembic import context
 from config import HOST, USER_NAME, DB_NAME, PASSWORD, PORT
 from src.user.user_model import Base as UserBase
 from src.smtp.smtp_model import Base as SMTPBase
+from src.images.image_model import Base as ImageBase
 import sys
 import os
 

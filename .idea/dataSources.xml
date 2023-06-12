@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="micro_auth@localhost" uuid="65f05a25-c45a-4370-8631-5bb9d8acc720">
+    <data-source source="LOCAL" name="micro_auth@localhost" uuid="62a15a17-ea8f-4f1a-9c6e-f9d4794579f4">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>

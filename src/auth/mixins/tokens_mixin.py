@@ -20,7 +20,7 @@ class TokenMixin(DependsMixin):
     ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
     REFRESH_TOKEN_EXPIRE_MINUTES = os.getenv("REFRESH_TOKEN_EXPIRE_MINUTES")
 
-    def create_access_token(self, user: ResponseUser, expires_delta=None):
+    def create_access_token(self, user: dict, expires_delta=None):
         '''Если RefreshToken не требуется, вводим свое собственное время жизни токена'''
         if expires_delta:
             expire = datetime.utcnow() + expires_delta
@@ -49,6 +49,7 @@ class TokenMixin(DependsMixin):
     #     return jwt.decode(token, self.REFRESH_SECRET_KEY, algorithms=[self.ALGORITHM])
 
     def _generate_token(self, user, key, expire):
-
-        to_encode = {"exp": expire, "user": user.__dict__}
+        user.pop('images', None)
+        user.pop("password", None)
+        to_encode = {"exp": expire, "user": user}
         return jwt.encode(to_encode, key, algorithm=self.ALGORITHM)

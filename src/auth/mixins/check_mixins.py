@@ -1,7 +1,9 @@
 from datetime import datetime
 
 from fastapi import HTTPException, status
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from src.auth.mixins.depends_mixin import DependsMixin
 from src.user.mixins.hash_mixin import HashMixin
@@ -29,7 +31,7 @@ class CheckUserMixin(DependsMixin, HashMixin):
         return {"is_phone_exsist": is_phone_exsist, "is_email_exsist": is_email_exsist}
 
     async def _check_password(self, email, password):
-        query = select(UserModel).where(UserModel.email == email)
+        query = select(UserModel).where(UserModel.email == email).options(selectinload(UserModel.images))
         result = await self.session.execute(query)
         user = result.scalar_one_or_none()
         if user:
@@ -42,4 +44,5 @@ class CheckUserMixin(DependsMixin, HashMixin):
 
         user.date_last_actions = datetime.utcnow()
         await self.session.commit()
-        return user
+
+        return jsonable_encoder(user)

@@ -1,7 +1,9 @@
+import os
+
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
+SERCRET = os.getenv("SECRET")
 
 class HashMixin:
     @staticmethod

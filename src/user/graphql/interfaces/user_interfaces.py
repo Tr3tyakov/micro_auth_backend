@@ -1,4 +1,11 @@
 import graphene
+
+
+class UserImages(graphene.ObjectType):
+    id = graphene.ID()
+    url = graphene.String()
+
+
 class User(graphene.ObjectType):
     id = graphene.ID()
     email = graphene.String()
@@ -10,4 +17,4 @@ class User(graphene.ObjectType):
     date_register = graphene.String()
     date_last_actions = graphene.String()
     phone = graphene.String()
-    avatar = graphene.String()
+    images = graphene.List(UserImages)

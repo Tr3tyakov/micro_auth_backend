@@ -1,7 +1,9 @@
-from typing import Optional
+from typing import Optional, List, Any
 
 from pydantic import BaseModel
 from datetime import datetime
+
+from src.images.image_schema import ImageResponse
 
 
 class User(BaseModel):
@@ -12,24 +14,31 @@ class User(BaseModel):
     city: Optional[str] = None
     phone: Optional[str] = None
 
+
 class FullUser(User):
-    password:str
+    password: str
 
 
 class ResponseUser(User):
     id: int
     date_last_actions: Optional[datetime] = None
     date_register: datetime
+    images: Optional[List[ImageResponse]] = []
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.date_last_actions = self.formate_time(kwargs.get('date_last_actions'))
-        self.date_register = self.formate_time(kwargs.get('date_register'))
+    class Config:
+        json_encoders = {
+            datetime: lambda dt: dt.strftime("%d.%m.%Y %H:%M")
+        }
 
-    def formate_time(self, date):
-        if date:
-            return date.strftime("%d.%m.%Y %H:%m")
-        return None
+
+class UpdateUser(BaseModel):
+    email: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    age: Optional[int] = None
+    city: Optional[str] = None
+    phone: Optional[str] = None
+    password: Optional[str] = None
 
 
 class ResetPassword(BaseModel):

@@ -16,9 +16,12 @@ async def registration(request: RegisterUser, service: AuthService = Depends()):
         raise exec
 
 
-@router.post('/authorization')
+@router.post('/authorization', response_model=ResponseAuthUser)
 async def authorization(request: AuthUser, service: AuthService = Depends()):
-    return await service.authorization(request=request)
+    try:
+        return await service.authorization(request=request)
+    except HTTPException as exec:
+        raise exec
 
 
 @router.get('/confirm_email')

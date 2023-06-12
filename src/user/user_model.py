@@ -1,7 +1,7 @@
 from sqlalchemy import Integer, Column, String, DateTime, Boolean
+from sqlalchemy.orm import relationship
 
 from database import Base
-from src.user.mixins.serializer_mixin import SerializerMixin
 
 
 class UserModel(Base):
@@ -17,11 +17,9 @@ class UserModel(Base):
     city = Column(String, nullable=True, default=None, name='Город')
     date_register = Column(DateTime(timezone=True), nullable=False, name='Дата регистрации')
     date_last_actions = Column(DateTime(timezone=True), nullable=True, default=None, name='Дата последних действий')
-    phone = Column(String, default=None, nullable=True, name='Телефон', )
-    avatar = Column(String, default=None, nullable=True, name='Аватар')
+    phone = Column(String, default=None, nullable=True, name='Телефон')
+    images = relationship('ImageModel', cascade='all, delete')
 
-    # google_token
-    # apple_token
 
     def __str__(self):
         return f"{self.first_name}{self.last_name}"

@@ -1,18 +1,17 @@
-from datetime import timedelta, datetime
+import os
 
-from jose import JWTError, jwt, ExpiredSignatureError
-from fastapi import HTTPException, Header, Response, status
+from fastapi.encoders import jsonable_encoder
+from jose import jwt, ExpiredSignatureError
+from fastapi import HTTPException,status
 from sqlalchemy import update
 from starlette.responses import JSONResponse
-
-from src.auth.auth_schema import ResponseAuthUser, ResponsePartAuthTokens
 from src.auth.mixins.check_mixins import CheckUserMixin
 from src.auth.mixins.tokens_mixin import TokenMixin
 from src.smtp.smtp_service import SMTPService
 from src.user.mixins.user_mixin import UserMixin
 from src.user.user_model import UserModel
-from src.user.user_schema import ResponseUser
 
+CONFIRM_URL = os.getenv('CONFIRM_URL')
 
 class AuthService(CheckUserMixin, TokenMixin, UserMixin):
     async def registration(self, request):
@@ -26,8 +25,8 @@ class AuthService(CheckUserMixin, TokenMixin, UserMixin):
             raise HTTPException(detail="Данный Email уже зарегистрирован в сервисе", status_code=403)
 
         user = await self._create_user(request=request)
-        hashed_user_data = self.create_access_token(user=ResponseUser(**user.__dict__))
-        confirm_url = 'http://127.0.0.1:8000/auth/confirm_email/?user=' + hashed_user_data['access_token']
+        hashed_user_data = self.create_access_token(user=jsonable_encoder(user))
+        confirm_url = CONFIRM_URL + hashed_user_data['access_token']
 
         await SMTPService.send_message(email=user.email,
                                        subject='Подтверждение почты',
@@ -52,7 +51,7 @@ class AuthService(CheckUserMixin, TokenMixin, UserMixin):
         except HTTPException as exec:
             raise exec
 
-        response_user = ResponseUser(**user.__dict__)
+        response_user = jsonable_encoder(user)
         tokens = self.create_access_token(user=response_user)
 
         return {"user": response_user, "tokens": tokens}
@@ -72,10 +71,3 @@ class AuthService(CheckUserMixin, TokenMixin, UserMixin):
         await self.session.commit()
         return JSONResponse('Почта успешно подтверждена', status_code=status.HTTP_200_OK)
 
-
-class AuthGuardService:
-    def __init__(self, authorization: str = Header(default=None)):
-        if authorization is None:
-            self.authorization = None
-            return
-        self.authorization = authorization.split(' ')[1]

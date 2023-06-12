@@ -2,11 +2,15 @@ import os
 from datetime import datetime
 
 from fastapi import HTTPException, status, Depends
+from fastapi.encoders import jsonable_encoder
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt, ExpiredSignatureError
 from sqlalchemy import update, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from time import time
+
+from sqlalchemy.orm import selectinload
+
 from database import get_session
 from config import load_dotenv
 from src.user.user_model import UserModel
@@ -22,15 +26,10 @@ ALGORITHM = os.getenv("ALGORITHM")
 
 async def authenticate(credentials: HTTPAuthorizationCredentials = Depends(security),
                        session: AsyncSession = Depends(get_session)):
-    token = credentials.credentials
     try:
-        """Проверяем правильность/целостность токена"""
-        decoded_token = jwt.decode(token, ACCESS_SECRET_KEY, algorithms=[ALGORITHM])
-    except ExpiredSignatureError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-    except jwt.JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
+        decoded_token = check_token(credentials.credentials)
+    except HTTPException as exec:
+        raise exec
     user = decoded_token['user']
 
     """Обновляем поле, date_last_actions при выполнении пользователем конкретного действия"""
@@ -39,15 +38,23 @@ async def authenticate(credentials: HTTPAuthorizationCredentials = Depends(secur
     await session.execute(query)
     await session.commit()
 
-    """Получаем обновленного пользователя и сериализуем его"""
-    query = select(UserModel).where(UserModel.id == user['id'])
+    """Получаем обновленного пользователя"""
+    query = select(UserModel).where(UserModel.id == user['id']).options(selectinload(UserModel.images))
     result = await session.execute(query)
     updated_user = result.scalar_one_or_none()
 
     if updated_user is None:
-        raise HTTPException(detail='Данный пользователь не зарегистрирован в сервисе', status_code=status.HTTP_403_FORBIDDEN)
+        raise HTTPException(detail='Данный пользователь не зарегистрирован в сервисе',
+                            status_code=status.HTTP_403_FORBIDDEN)
 
-    serializer = ResponseUser(**updated_user.__dict__)
-    return serializer
+    return jsonable_encoder(updated_user)
 
 
+def check_token(token):
+    """Проверяем правильность/целостность токена"""
+    try:
+        return jwt.decode(token, ACCESS_SECRET_KEY, algorithms=[ALGORITHM])
+    except ExpiredSignatureError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    except jwt.JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
