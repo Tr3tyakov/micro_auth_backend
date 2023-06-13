@@ -1,6 +1,4 @@
 from fastapi import APIRouter, Depends, UploadFile, Form, File
-
-from src.images.image_schema import CreateImage
 from src.images.image_service import ImageService
 from src.user.dependens.auth_guard import authenticate
 from src.user.user_schema import ResponseUser

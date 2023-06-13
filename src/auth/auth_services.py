@@ -1,7 +1,6 @@
 import os
 
 from fastapi.encoders import jsonable_encoder
-from jose import jwt, ExpiredSignatureError
 from fastapi import HTTPException, status
 from sqlalchemy import update, select
 from starlette.responses import JSONResponse

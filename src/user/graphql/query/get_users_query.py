@@ -1,13 +1,7 @@
 import graphene
-from fastapi import HTTPException
-from graphql import GraphQLError
-from jose import ExpiredSignatureError, jwt
 from sqlalchemy.orm import selectinload
-from starlette import status
-
 from database import async_session_maker
 from src.user.graphql.interfaces.user_interfaces import User
-from src.user.graphql.services.token_service import extract_user_from_token
 from src.user.user_model import UserModel
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select

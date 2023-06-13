@@ -3,7 +3,6 @@ from sqlalchemy import select
 from src.user.mixins.hash_mixin import HashMixin
 from src.user.user_model import UserModel
 from src.auth.mixins.depends_mixin import DependsMixin
-from passlib.context import CryptContext
 from datetime import datetime
 
 

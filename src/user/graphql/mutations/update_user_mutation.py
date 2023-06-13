@@ -4,16 +4,11 @@ import graphene
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from graphql import GraphQLError
-from sqlalchemy.sql.functions import user
-
 from database import async_session_maker
 from sqlalchemy import update, select
-
 from src.user.graphql.interfaces.user_interfaces import User
 from src.user.graphql.services.token_service import extract_user_from_token
-from src.user.mixins.hash_mixin import HashMixin
 from src.user.user_model import UserModel
-from src.user.user_schema import UpdateUser
 
 CONFIRM_URL = os.getenv('CONFIRM_URL')
 

@@ -2,7 +2,6 @@ import graphene
 from fastapi import HTTPException
 from graphql import GraphQLError
 from sqlalchemy.orm import selectinload
-
 from database import async_session_maker
 from src.user.graphql.interfaces.user_interfaces import User
 from src.user.graphql.services.token_service import extract_user_from_token

@@ -1,5 +1,4 @@
 from sqlalchemy import Column, String, Integer
-
 from database import Base
 
 
@@ -15,8 +14,3 @@ class SMTPModel(Base):
 
     def __str__(self):
         return f"smtp {self.smtp_address}"
-
-# nasutkicalendar@yandex.ru
-# smtp.yandex.ru
-# 465
-# ?

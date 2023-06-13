@@ -1,21 +1,16 @@
 import os
-from datetime import datetime
-
 import graphene
-from fastapi import HTTPException
+
 from fastapi.encoders import jsonable_encoder
 from graphql import GraphQLError
-
 from database import async_session_maker
 from src.auth.mixins.tokens_mixin import TokenMixin
 from src.smtp.smtp_service import SMTPService
 from src.user.graphql.interfaces.user_interfaces import User
-from src.user.graphql.services.token_service import extract_user_from_token
 from src.user.mixins.user_mixin import UserMixin
 from src.user.user_model import UserModel
 from sqlalchemy import select
-
-from src.user.user_schema import FullUser, ResponseUser
+from src.user.user_schema import FullUser
 
 CONFIRM_URL = os.getenv('CONFIRM_URL')
 

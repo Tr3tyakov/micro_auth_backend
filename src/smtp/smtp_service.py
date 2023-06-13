@@ -1,22 +1,13 @@
-import random
 import smtplib
-import os
-import string
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
-from fastapi import HTTPException, status, Depends, Response
-
+from fastapi import HTTPException, status
 from sqlalchemy import select, update
-from sqlalchemy.engine import create
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from database import get_session
 from src.auth.mixins.check_mixins import CheckUserMixin
 from src.auth.mixins.depends_mixin import DependsMixin
 from src.smtp.smtp_model import SMTPModel
-from src.user.mixins.hash_mixin import HashMixin
 
 
 class SMTPService(CheckUserMixin, DependsMixin):

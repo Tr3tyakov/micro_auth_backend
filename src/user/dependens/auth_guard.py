@@ -1,20 +1,17 @@
 import os
-from datetime import datetime
 
+from datetime import datetime
 from fastapi import HTTPException, status, Depends
 from fastapi.encoders import jsonable_encoder
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt, ExpiredSignatureError
 from sqlalchemy import update, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from time import time
-
 from sqlalchemy.orm import selectinload
-
 from database import get_session
 from config import load_dotenv
 from src.user.user_model import UserModel
-from src.user.user_schema import ResponseUser
+
 
 load_dotenv()
 

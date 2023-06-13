@@ -1,8 +1,8 @@
-from fastapi import Depends, APIRouter, HTTPException, Header
+from fastapi import Depends, APIRouter, HTTPException
 from typing import List
 
 from src.user.dependens.auth_guard import authenticate
-from src.user.user_schema import ResponseUser, UpdateUser
+from src.user.user_schema import ResponseUser
 from src.user.user_service import UserService
 
 router = APIRouter()

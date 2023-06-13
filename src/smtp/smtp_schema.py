@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 
-
 class CreateSMTP(BaseModel):
     email_address: str
     smtp_address: str

@@ -1,5 +1,4 @@
 from fastapi import HTTPException
-
 from src.user.dependens.auth_guard import check_token
 
 

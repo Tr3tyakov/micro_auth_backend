@@ -1,17 +1,13 @@
-import json
 import string
 import random
 
 from fastapi.encoders import jsonable_encoder
-from jose import ExpiredSignatureError
 from sqlalchemy import delete, select, update
 from fastapi import HTTPException, status, Response
 from sqlalchemy.orm import selectinload
 from starlette.responses import JSONResponse
-
 from src.auth.mixins.check_mixins import CheckUserMixin
 from src.smtp.smtp_service import SMTPService
-
 from src.user.mixins.user_mixin import UserMixin
 from src.user.user_model import UserModel
 from src.user.user_schema import ResponseUser

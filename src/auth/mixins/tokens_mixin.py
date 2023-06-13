@@ -37,8 +37,8 @@ class TokenMixin(DependsMixin):
         return datetime.utcnow() + timedelta(minutes=int(expire_minutes))
 
     def decode_access_token(self, token):
+        """Проверяем правильность/целостность токена"""
         try:
-            """Проверяем правильность/целостность токена"""
             return jwt.decode(token, self.ACCESS_SECRET_KEY, algorithms=[self.ALGORITHM])
         except ExpiredSignatureError:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
@@ -46,8 +46,8 @@ class TokenMixin(DependsMixin):
             raise HTTPException(status_code=401, detail="Invalid token")
 
     def decode_refresh_token(self, token):
+        """Проверяем правильность/целостность токена"""
         try:
-            """Проверяем правильность/целостность токена"""
             return jwt.decode(token, self.REFRESH_SECRET_KEY, algorithms=[self.ALGORITHM])
         except ExpiredSignatureError:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)

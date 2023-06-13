@@ -1,14 +1,11 @@
 import os
 
-from sqlalchemy import delete, insert
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import UploadFile, Depends, status, Response
-from sqlalchemy import select, update
+from sqlalchemy import delete
+from fastapi import UploadFile, status
+from sqlalchemy import select
 from starlette.responses import JSONResponse
-
-from database import get_session
 from src.auth.mixins.depends_mixin import DependsMixin
-from src.images.image_schema import CreateImage, ImageResponse
+from src.images.image_schema import ImageResponse
 from src.images.image_model import ImageModel
 
 

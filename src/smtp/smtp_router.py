@@ -1,8 +1,6 @@
 from fastapi import Depends, APIRouter, HTTPException
-
 from src.smtp.smtp_schema import CreateSMTP
 from src.smtp.smtp_service import SMTPService
-from src.user.user_service import UserService
 
 router = APIRouter()
 
