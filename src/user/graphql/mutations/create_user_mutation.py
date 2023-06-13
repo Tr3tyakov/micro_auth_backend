@@ -50,7 +50,7 @@ class CreateUserMutation(graphene.Mutation):
             json_user = jsonable_encoder(new_user)
 
             token_mixin = TokenMixin()
-            hashed_user_data = token_mixin.create_access_token(user=json_user)
+            hashed_user_data = token_mixin.generate_tokens(user=json_user)
 
             confirm_url = CONFIRM_URL + hashed_user_data['access_token']
 

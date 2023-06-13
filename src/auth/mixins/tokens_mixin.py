@@ -20,7 +20,7 @@ class TokenMixin(DependsMixin):
     ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
     REFRESH_TOKEN_EXPIRE_MINUTES = os.getenv("REFRESH_TOKEN_EXPIRE_MINUTES")
 
-    def create_access_token(self, user: dict, expires_delta=None):
+    def generate_tokens(self, user: dict, expires_delta=None):
         '''Если RefreshToken не требуется, вводим свое собственное время жизни токена'''
         if expires_delta:
             expire = datetime.utcnow() + expires_delta
@@ -45,8 +45,14 @@ class TokenMixin(DependsMixin):
         except jwt.JWTError:
             raise HTTPException(status_code=401, detail="Invalid token")
 
-    # def decode_refresh_token(self, token):
-    #     return jwt.decode(token, self.REFRESH_SECRET_KEY, algorithms=[self.ALGORITHM])
+    def decode_refresh_token(self, token):
+        try:
+            """Проверяем правильность/целостность токена"""
+            return jwt.decode(token, self.REFRESH_SECRET_KEY, algorithms=[self.ALGORITHM])
+        except ExpiredSignatureError:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        except jwt.JWTError:
+            raise HTTPException(status_code=401, detail="Invalid token")
 
     def _generate_token(self, user, key, expire):
         user.pop('images', None)
