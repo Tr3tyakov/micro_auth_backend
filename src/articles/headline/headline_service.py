@@ -39,7 +39,7 @@ class HeadlineService(HeadlineMixin):
         except HTTPException as exec:
             raise exec
 
-        query = update(HeadlineModel).where(HeadlineModel.id == id).options(HeadlineModel.articles).values(
+        query = update(HeadlineModel).where(HeadlineModel.id == id).values(
             name=request.get('name', headline['name']),
             date_edited=datetime.utcnow()
         )

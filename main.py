@@ -5,6 +5,7 @@ from database import get_session
 
 from starlette_graphene3 import GraphQLApp, make_graphiql_handler, make_playground_handler
 
+from src.articles.article.graphql.schemas.schemas import article_schema
 from src.articles.headline.graphql.schemas.schemas import headline_schema
 from src.auth.auth_router import router as auth_router
 from src.articles.headline.headline_router import router as headline_router
@@ -26,6 +27,8 @@ app.mount('/graphql_user',
           GraphQLApp(schema=user_schema, on_get=make_playground_handler()))
 app.mount('/graphql_headline',
           GraphQLApp(schema=headline_schema, on_get=make_playground_handler()))
+app.mount('/graphql_article',
+          GraphQLApp(schema=article_schema, on_get=make_playground_handler()))
 
 app.mount('/micro_auth/static', StaticFiles(directory='src/static/uploaded_files'))
 

@@ -35,7 +35,7 @@ class ArticleService(ArticleMixin, HeadlineMixin):
 
     async def get_article_by_id(self, article_id):
         try:
-            await self._get_article(article_id=article_id)
+            return await self._get_article(article_id=article_id)
         except HTTPException as exec:
             raise exec
 

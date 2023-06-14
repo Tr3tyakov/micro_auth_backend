@@ -9,19 +9,21 @@ from src.articles.headline.headline_service import HeadlineService
 from src.user.graphql.services.token_service import extract_user_from_token
 
 
-class CreateHeadlinesMutation(graphene.Mutation):
+class UpdateHeadlinesMutation(graphene.Mutation):
     class Arguments:
         name = graphene.String()
+        headline_id = graphene.Int()
 
     message = graphene.String()
     headline = graphene.Field(Headline)
 
-    async def mutate(self, info, **kwargs):
+    async def mutate(self, info, headline_id, **kwargs):
         async with async_session_maker() as session:
             try:
                 extract_user_from_token(info)
             except HTTPException:
                 raise GraphQLError(message='Token is invalid')
-
-            new_headline = await HeadlineService(session=session).create_headline(request=Translater(**kwargs))
-            return CreateHeadlinesMutation(headline=new_headline)
+            print(headline_id, kwargs)
+            updated_headline = await HeadlineService(session=session).update_headline(request=kwargs,
+                                                                                      id=headline_id)
+            return UpdateHeadlinesMutation(headline=updated_headline)
