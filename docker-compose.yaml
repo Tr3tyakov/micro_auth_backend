@@ -5,7 +5,7 @@ services:
   db:
     image: postgres:13.0-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - micro_auth_postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -13,6 +13,20 @@ services:
     restart: always
     ports:
       - "5430:5432"
+    networks:
+      - micro_auth_network
+
+  micro_service:
+    image:
+      micro_service
+    networks:
+      - micro_auth_network
+
+networks:
+  micro_auth_network:
+    driver: bridge
 
 volumes:
-  postgres_data:
+  micro_auth_postgres_data:
+    external: true
+

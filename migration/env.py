@@ -11,6 +11,7 @@ from src.smtp.smtp_model import Base as SMTPBase
 from src.images.image_model import Base as ImageBase
 from src.articles.article.article_model import Base as ArticleBase
 from src.articles.headline.headline_model import Base as HeadlineBase
+from src.logs.logs_model import Base as LogsBase
 
 import sys
 import os

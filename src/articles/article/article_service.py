@@ -5,14 +5,21 @@ from datetime import datetime
 from src.articles.article.article_model import ArticleModel
 from src.articles.article.mixins.article_mixin import ArticleMixin
 from src.articles.headline.mixins.headline_mixin import HeadlineMixin
+from src.logs.logs_service import LogsService
 
 
 class ArticleService(ArticleMixin, HeadlineMixin):
     async def get_all_articles(self):
         return await self._get_articles()
 
-    async def get_headline_articles(self, headline_id):
-        return await self._get_articles(headline_id=headline_id)
+    async def get_headline_articles(self, user, headline_id):
+        try:
+            articles = await self._get_articles(headline_id=headline_id)
+            await LogsService().send_message(
+                body={"user_id": user["id"], "headline_id": headline_id, "datetime_open": str(datetime.utcnow())})
+            return articles
+        except HTTPException as exec:
+            raise exec
 
     async def create_article(self, request):
         try:

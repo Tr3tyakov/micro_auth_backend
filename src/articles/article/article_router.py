@@ -12,7 +12,7 @@ router = APIRouter()
 
 @router.get('/get_all_articles/', response_model=List[ArticleResponse])
 async def get_all_articles(service: ArticleService = Depends(),
-                                user: ResponseUser = Depends(authenticate)):
+                           user: ResponseUser = Depends(authenticate)):
     try:
         return await service.get_all_articles()
     except HTTPException as exec:
@@ -23,7 +23,7 @@ async def get_all_articles(service: ArticleService = Depends(),
 async def get_headline_articles(headline_id: int, service: ArticleService = Depends(),
                                 user: ResponseUser = Depends(authenticate)):
     try:
-        return await service.get_headline_articles(headline_id=headline_id)
+        return await service.get_headline_articles(user=user, headline_id=headline_id)
     except HTTPException as exec:
         raise exec
 
