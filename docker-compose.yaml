@@ -5,20 +5,19 @@ services:
   db:
     image: postgres:13.0-alpine
     volumes:
-      - micro_auth_postgres_data:/var/lib/postgresql/data
+      - micro_auth_backend_postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     restart: always
     ports:
-      - "5430:5432"
+      - "5431:5432"
     networks:
       - micro_service_network
 
-
   micro_service:
-    image: micro_service
+    image: imtretyakov/micro_service
     depends_on:
       - db
     ports:
@@ -26,19 +25,30 @@ services:
     networks:
       - micro_service_network
 
-#  rabbit_service:
-#    image: rabbit_service
-#    depends_on:
-#      - db
-#    networks:
-#      - micro_service_network
+  rabbit_service:
+    image: imtretyakov/rabbit_service
+    depends_on:
+      - db
+      - rabbitmq
+    ports:
+      - "5000:5000"
+    networks:
+      - micro_service_network
+
+  rabbitmq:
+    image: rabbitmq
+    ports:
+      - "5672:5672"
+    networks:
+      - micro_service_network
+
 
 
 volumes:
-  micro_auth_postgres_data:
+  micro_auth_backend_postgres_data:
     external: true
 
 networks:
   micro_service_network:
-
+    external: true
 

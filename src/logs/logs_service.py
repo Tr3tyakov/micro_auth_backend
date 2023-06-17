@@ -14,7 +14,7 @@ class LogsService:
         self.channel = None
 
     async def send_message(self, body):
-        self.connection = await aio_pika.connect_robust(host='localhost', port=5672)
+        self.connection = await aio_pika.connect_robust(host='micro_auth_python-rabbitmq-1', port=5672)
 
         async with self.connection:
             channel = await self.connection.channel()

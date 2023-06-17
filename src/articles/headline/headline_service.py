@@ -19,7 +19,9 @@ class HeadlineService(HeadlineMixin):
         )
         self.session.add(headline)
         await self.session.commit()
-        return jsonable_encoder(headline)
+        await self.session.refresh(headline)
+        created_headline = await self._get_headline(id=headline.id)
+        return jsonable_encoder(created_headline)
 
     async def get_all_headlines(self):
         query = select(HeadlineModel).options(selectinload(HeadlineModel.articles))
